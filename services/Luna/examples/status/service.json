@@ -1,0 +1,5 @@
+{
+    "name": "status",
+    "description": "Shows status of a example service server",
+    "version": "1"
+}

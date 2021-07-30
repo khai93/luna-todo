@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>Luna Registry</title>
+
+<!-- Load Bulma -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+
+<body>
+    <h1 class="title is-1">Luna Service Registry</h1>
+    <h2 class="subtitle is-4"><%= new Date(Date.now()).toUTCString() %></h2>
+    
+    <table class="table is-fullwidth is-hoverable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Instances Online</th>
+          <th> </th>
+        </tr>
+      </thead>
+      <tbody>
+      <% for (let service of services) { %>
+        <tr>
+          <td><%= service.name %></td>
+          <td><%= service.description %></td>
+          <th>
+            <% if (service.status == 'UP') { %> 
+            <span class="has-text-success">UP</span> 
+            <% } else { %> 
+            <span class="has-text-danger">DOWN</span> 
+            <% } %>
+          </th>
+          <td><%= service.instances.filter(instance => instance.status == 'OK').length %></td>
+          <td>
+            <div id="<%= 'instance-modal-' + service.name %>" class="modal">
+              <div class="modal-background"></div>
+              <div class="modal-content">
+                <table class="table is-hoverable">
+                  <thead>
+                    <tr>
+                      <th>Instance Id</th>
+                      <th>Version</th>
+                      <th>Status</th>
+                      <th>Url</th>
+                      <th>Last Heartbeat</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% for (let instance of service.instances) { %>
+                      <tr>
+                        <td><%= instance.instanceId %></td>
+                        <td><%= instance.version %></td>
+                        <th><%= instance.status %></th>
+                        <td><a href="<%= instance.url %>"><%= instance.url %></a></td>
+                        <td><%= new Date(instance.last_heartbeat).toUTCString() %></td>
+                      </tr>
+                    <% } %>
+                  </tbody>
+                </table>
+              </div>
+              <button onclick="<%= "closeModal('instance-modal-" + service.name + "')" %>" class="modal-close is-large" aria-label="close"></button>
+            </div>
+            <a onclick="<%= "showModal('instance-modal-" + service.name + "')" %>">View Instances</a>
+            
+          </td>
+          
+          </tr>
+      <% } %>
+      </tbody>
+    </table>
+
+    
+</body>
+
+<script>
+function showModal(idOfModal) {
+  const ele = document.getElementById(idOfModal);
+
+  if (ele != null) {
+    ele.classList.add("is-active");
+  }
+}
+
+function closeModal(idOfModal) {
+  const ele = document.getElementById(idOfModal);
+
+  if (ele != null) {
+    ele.classList.remove("is-active");
+  }
+}
+</script>
+
+<style>
+  body { padding: 20px }
+</style>
